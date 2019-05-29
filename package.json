@@ -1,0 +1,7 @@
+{
+    "name": "erandr",
+    "version": "1",
+    "description": "Simple xrandr wrapper",
+    "scripts": ["erandr"],
+    "install": ""
+}

@@ -1,0 +1,89 @@
+#!/bin/bash
+# Erandr - Evan's RandR
+# Evan Widloski - 2016-11-27
+# xrandr shortcuts
+
+# --------- Examples ---------
+## place secondary display to the left of primary
+# erandr left
+#
+## place secondary display to the right of primary
+# erandr right
+#
+## place secondary display to the left of primary, rotate -90
+# erandr left vert
+#
+## use secondary screen as main monitor, disable primary
+# erandr movie
+#
+## return to normal single display on primary
+# erandr single
+
+# try load displays from config
+if [ -f ~/.config/erandr ]
+then
+    source ~/.config/erandr
+fi
+# try to figure out primary and secondary from xrandr output
+## main display name
+if [ -z $primary ]
+then
+   primary=$(xrandr | awk '/ connected primary/{print $1}')
+fi
+## secondary display name
+if [ -z $secondary ]
+then
+    secondary=$(xrandr | awk '/ connected primary/{next}/ connected/{print $1;exit}')
+fi
+## disconnected, but enabled displays
+if [ -z $disconnected ]
+then
+    disconnected=$(xrandr | awk '/ disconnected [0-9]+x[0-9]+/{print $1}')
+fi
+
+## rotate `secondary` for vertical screens
+if [[ $* == "*rvert*" ]]
+then
+    rotate=right
+elif [[ $* == *vert* ]]
+then
+    rotate=left
+else
+    rotate=normal
+fi
+
+## place `secondary` to the right of `primary`
+if [[ $* == *right* ]]
+then
+    xrandr --output $primary --primary --auto --output $secondary --auto --right-of $primary --rotate $rotate
+fi
+
+## place `secondary` to the left of `primary`
+if [[ $* == *left* ]]
+then
+    xrandr --output $primary --primary --auto --output $secondary --auto --left-of $primary --rotate $rotate
+fi
+
+## reset and go back to single monitor
+if [[ $* == *single* ]]
+then
+    for display in $disconnected
+    do
+        xrandr --output $display --off
+    done
+    xrandr --output $secondary --off
+
+    xrandr --output $primary --auto --primary --rotate $rotate
+fi
+
+## turn off `primary` and turn on `secondary`
+if [[ $* == *movie* ]]
+then
+    xrandr --auto --output $primary --primary --off --output $secondary --rotate $rotate
+fi
+
+# run $set_wallpaper from ~/.config/erandr if it is set
+if [ -n set_wallpaper ]
+then
+    eval $set_wallpaper
+fi
