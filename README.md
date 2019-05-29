@@ -34,6 +34,16 @@ erandr movie
 erandr single
 ```
 
+## Configuration
+
+Auto-detected primary and secondary monitors can be overriden in `~/.config/erandr`.  A command for resetting the wallpaper after executing xrandr can also be specified.
+
+*~/.config/erandr*
+```
+primary="VGA1"
+secondary="VGA2"
+set_wallpaper="feh --bg-fill ~/pictures/wallpaper.jpg"
+```
 ## See also
 
 - [arandr](https://christian.amsuess.com/tools/arandr/)
