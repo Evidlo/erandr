@@ -28,12 +28,12 @@ fi
 ## main display name
 if [ -z $primary ]
 then
-   primary=$(xrandr | awk '/ connected primary/{print $1}')
+    primary=$(xrandr | grep 'connected' | awk 'NR==1 {print $1}')
 fi
 ## secondary display name
 if [ -z $secondary ]
 then
-    secondary=$(xrandr | awk '/ connected primary/{next}/ connected/{print $1;exit}')
+    secondary=$(xrandr | grep 'connected' | awk 'NR==2 {print $1}')
 fi
 ## disconnected, but enabled displays
 if [ -z $disconnected ]
@@ -52,16 +52,26 @@ else
     rotate=normal
 fi
 
+## use secondry display as primray
+if [[ $* == *primary* ]]
+then
+    secondprimary="--primary"
+    firstprimary=""
+else
+    firstprimary="--primary"
+    secondprimary=""
+fi
+
 ## place `secondary` to the right of `primary`
 if [[ $* == *right* ]]
 then
-    xrandr --output $primary --primary --auto --output $secondary --auto --right-of $primary --rotate $rotate
+    cmd="xrandr --output $primary $firstprimary --auto --output $secondary $secondprimary --auto --right-of $primary --rotate $rotate"
 fi
 
 ## place `secondary` to the left of `primary`
 if [[ $* == *left* ]]
 then
-    xrandr --output $primary --primary --auto --output $secondary --auto --left-of $primary --rotate $rotate
+    cmd="xrandr --output $primary $firstprimary --auto --output $secondary $secondprimary --auto --left-of $primary --rotate $rotate"
 fi
 
 ## reset and go back to single monitor
@@ -69,18 +79,29 @@ if [[ $* == *single* ]]
 then
     for display in $disconnected
     do
-        xrandr --output $display --off
+        cmd="xrandr --output $display --off"
     done
-    xrandr --output $secondary --off
+    cmd="xrandr --output $secondary --off"
 
-    xrandr --output $primary --auto --primary --rotate $rotate
+    cmd="xrandr --output $primary --auto --primary --rotate $rotate"
 fi
 
 ## turn off `primary` and turn on `secondary`
 if [[ $* == *movie* ]]
 then
-    xrandr --auto --output $primary --primary --off --output $secondary --rotate $rotate
+    cmd="xrandr --output $primary --off"
+    cmd="xrandr --output $secondary --auto --primary --rotate $rotate"
 fi
+
+## turn off both `primary` and `secondary`
+if [[ $* == *off* ]]
+then
+    cmd="xrandr --auto --output $primary $firstprimary --off --output $secondary $secondprimary --off"
+fi
+
+echo "Executing command:"
+echo "$cmd"
+$cmd
 
 # run $set_wallpaper from ~/.config/erandr if it is set
 if [ -n set_wallpaper ]
