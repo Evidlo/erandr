@@ -81,9 +81,8 @@ then
     do
         cmd="xrandr --output $display --off"
     done
-    cmd="xrandr --output $secondary --off"
 
-    cmd="xrandr --output $primary --auto --primary --rotate $rotate"
+    cmd="xrandr --output $primary --auto --primary --rotate $rotate; xrandr --output $secondary --off"
 fi
 
 ## turn off `primary` and turn on `secondary`
@@ -101,7 +100,7 @@ fi
 
 echo "Executing command:"
 echo "$cmd"
-$cmd
+eval "$cmd"
 
 # run $set_wallpaper from ~/.config/erandr if it is set
 if [ -n set_wallpaper ]
