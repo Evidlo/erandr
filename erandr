@@ -42,10 +42,10 @@ then
 fi
 
 ## rotate `secondary` for vertical screens
-if [[ $* == "*rvert*" ]]
+if [[ $* == *rvert* ]]
 then
     rotate=right
-elif [[ $* == *vert* ]]
+elif [[ $* == *lvert* ]]
 then
     rotate=left
 else
