@@ -28,12 +28,12 @@ fi
 ## main display name
 if [ -z $primary ]
 then
-    primary=$(xrandr | grep 'connected' | awk 'NR==1 {print $1}')
+    primary=$(xrandr | grep ' connected' | awk 'NR==1 {print $1}')
 fi
 ## secondary display name
 if [ -z $secondary ]
 then
-    secondary=$(xrandr | grep 'connected' | awk 'NR==2 {print $1}')
+    secondary=$(xrandr | grep ' connected' | awk 'NR==2 {print $1}')
 fi
 ## disconnected, but enabled displays
 if [ -z $disconnected ]
