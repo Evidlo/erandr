@@ -88,8 +88,7 @@ fi
 ## turn off `primary` and turn on `secondary`
 if [[ $* == *movie* ]]
 then
-    cmd="xrandr --output $primary --off"
-    cmd="xrandr --output $secondary --auto --primary --rotate $rotate"
+    cmd="xrandr --output $primary --off --output $secondary --auto --primary --rotate $rotate"
 fi
 
 ## turn off both `primary` and `secondary`
